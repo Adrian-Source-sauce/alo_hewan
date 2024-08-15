@@ -1,3 +1,4 @@
+import 'package:alohewan/screen/detail_screen.dart';
 import 'package:feather_icons/feather_icons.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -6,160 +7,79 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:alohewan/models/service_model.dart';
 import 'package:alohewan/models/doctor_model.dart';
 
-var selectedService = 0;
-
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
+
+  @override
+  _HomeScreenState createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  int selectedService = 0;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: SafeArea(
-            child: Column(
-      children: [
-        const SizedBox(height: 20),
-        _greeting(),
-        const SizedBox(height: 17),
-        _card(),
-        const SizedBox(height: 20),
-        _search(),
-        const SizedBox(height: 20),
-        _services(),
-        const SizedBox(height: 20),
-        _bottomCard()
-      ],
-    )));
+      body: SafeArea(
+        child: Column(
+          children: [
+            const SizedBox(height: 20),
+            _greeting(),
+            const SizedBox(height: 17),
+            _card(context),
+            const SizedBox(height: 20),
+            _search(),
+            const SizedBox(height: 20),
+            _services(),
+            const SizedBox(height: 20),
+            _bottomCard(),
+          ],
+        ),
+      ),
+    );
   }
 
-  Expanded _bottomCard() {
-    return Expanded(
-        child: ListView.separated(
-            scrollDirection: Axis.vertical,
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            // physics: const  AlwaysScrollableScrollPhysics(),
-            shrinkWrap: true,
-            itemBuilder: (context, index) => Container(
-                  padding: const EdgeInsets.all(20),
+  Padding _greeting() {
+    return Padding(
+      padding: const EdgeInsets.only(left: 30, right: 15),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            'Hello Adrian!',
+            style: GoogleFonts.manrope(
+                fontSize: 24, fontWeight: FontWeight.w800, color: Colors.black),
+          ),
+          Stack(children: [
+            IconButton(
+                onPressed: () {}, icon: const Icon(FeatherIcons.shoppingBag)),
+            Positioned(
+              right: 6,
+              top: 6,
+              child: Container(
+                  height: 15,
+                  width: 15,
                   decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(14),
-                      boxShadow: [
-                        BoxShadow(
-                            color: const Color(0XFF35385A).withOpacity(0.12),
-                            blurRadius: 30,
-                            offset: const Offset(0, 2))
-                      ]),
-                  child: Row(
-                    children: [
-                    Container(
-                        clipBehavior: Clip.hardEdge,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Image.asset(
-                          doctors[index].image,
-                          height: 103,
-                          width: 88,
-                        )),
-                    const SizedBox(width: 20),
-                    Column(
-                      children: [
-                        Text(
-                          doctors[index].name,
-                          style: GoogleFonts.manrope(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w800,
-                              color: const Color(0xFF35385A)),
-                        ),
-                        const SizedBox(height: 5),
-                        Row(
-                          
-                          children: [
-                            RichText(
-                                text: TextSpan(
-                                    text:
-                                        ("Service : ${doctors[index].service.join(', ')}"),
-                                    style: GoogleFonts.manrope(
-                                        fontSize: 12,
-                                        color: const Color(0xFF35385A)))),
-                          ],
-                        ),
-                                    const SizedBox(height: 5),
-                                    SizedBox(
-                                      
-                                      child: Row(
-                                        crossAxisAlignment: CrossAxisAlignment.center,
-                                        children: [
-                                        Icon(FeatherIcons.mapPin, color: Color.fromARGB(255, 86, 234, 42), size: 14,),
-                                        const SizedBox(width: 5),
-                                        Text(doctors[index].distance, 
-                                        style: GoogleFonts.manrope(fontSize: 12, color: const Color(0xFFACA3A3),))
-                                      ],),
-                                    )
-                      ],
-                    )
-                  ]),
-                ),
-            separatorBuilder: (context, index) => const SizedBox(height: 11),
-            itemCount: doctors.length),
-      );
+                      color: const Color(0xFFE91E63), shape: BoxShape.circle),
+                  child: Center(
+                      child: Padding(
+                    padding: const EdgeInsets.only(bottom: 3),
+                    child: Text(
+                      '4',
+                      style: GoogleFonts.mPlus1(
+                          color: Colors.white,
+                          fontSize: 10,
+                          fontWeight: FontWeight.w800),
+                    ),
+                  ))),
+            )
+          ])
+        ],
+      ),
+    );
   }
 
-  SizedBox _services() {
-    return SizedBox(
-        height: 40,
-        child: ListView.separated(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          scrollDirection: Axis.horizontal,
-          itemBuilder: (context, index) => Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10),
-            decoration: BoxDecoration(
-                color: selectedService == index
-                    ? const Color(0xFF818AF9)
-                    : const Color(0xFFF5F5F5),
-                borderRadius: BorderRadius.circular(12)),
-            child: Center(
-              child: Text(
-                Service.all()[index],
-                style: GoogleFonts.manrope(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w800,
-                  color: selectedService == index
-                      ? const Color(0xFFF5F5F5)
-                      : const Color(0xFFCACACA),
-                ),
-              ),
-            ),
-          ),
-          separatorBuilder: (context, index) => const SizedBox(
-            width: 10,
-          ),
-          itemCount: Service.all().length,
-        ));
-  }
-
-  Widget _search() {
-    return Container(
-        margin: const EdgeInsets.symmetric(horizontal: 20),
-        padding: EdgeInsets.symmetric(horizontal: 4, vertical: 4),
-        decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10),
-            color: const Color(0xFFF5F5F5)),
-        child: TextField(
-          decoration: InputDecoration(
-            border: UnderlineInputBorder(borderSide: BorderSide.none),
-            prefixIcon:
-                Icon(FeatherIcons.search, color: const Color(0xFFADACAD)),
-            hintText: "Search for your Doctor",
-            hintStyle: GoogleFonts.manrope(
-                fontSize: 14,
-                color: const Color(0xFFCACACA),
-                height: 150 / 100),
-          ),
-        ));
-  }
-
-  AspectRatio _card() {
+  AspectRatio _card(BuildContext context) {
     return AspectRatio(
       aspectRatio: 336 / 184,
       child: Container(
@@ -206,7 +126,26 @@ class HomeScreen extends StatelessWidget {
                   Padding(
                       padding: const EdgeInsets.only(top: 20),
                       child: ElevatedButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            PageRouteBuilder(
+                              pageBuilder: (context, animation, secondaryAnimation) => DetailScreen(),
+                              transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                                const begin = Offset(1.0, 0.0);
+                                const end = Offset.zero;
+                                const curve = Curves.ease;
+
+                                var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+
+                                return SlideTransition(
+                                  position: animation.drive(tween),
+                                  child: child,
+                                );
+                              },
+                            ),
+                          );
+                        },
                         child: Text('See details',
                             style: GoogleFonts.manrope(
                               fontSize: 14,
@@ -229,43 +168,146 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Padding _greeting() {
-    return Padding(
-      padding: const EdgeInsets.only(left: 30, right: 15),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            'Hello Adrian!',
-            style: GoogleFonts.manrope(
-                fontSize: 24, fontWeight: FontWeight.w800, color: Colors.black),
+  Widget _search() {
+    return Container(
+        margin: const EdgeInsets.symmetric(horizontal: 20),
+        padding: EdgeInsets.symmetric(horizontal: 4, vertical: 4),
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+            color: const Color(0xFFF5F5F5)),
+        child: TextField(
+          decoration: InputDecoration(
+            border: UnderlineInputBorder(borderSide: BorderSide.none),
+            prefixIcon:
+                Icon(FeatherIcons.search, color: const Color(0xFFADACAD)),
+            hintText: "Search for your Doctor",
+            hintStyle: GoogleFonts.manrope(
+                fontSize: 14,
+                color: const Color(0xFFCACACA),
+                height: 150 / 100),
           ),
-          Stack(children: [
-            IconButton(
-                onPressed: () {}, icon: const Icon(FeatherIcons.shoppingBag)),
-            Positioned(
-              right: 6,
-              top: 6,
-              child: Container(
-                  height: 15,
-                  width: 15,
-                  decoration: BoxDecoration(
-                      color: const Color(0xFFE91E63), shape: BoxShape.circle),
-                  child: Center(
-                      child: Padding(
-                    padding: const EdgeInsets.only(bottom: 3),
-                    child: Text(
-                      '4',
-                      style: GoogleFonts.mPlus1(
-                          color: Colors.white,
-                          fontSize: 10,
-                          fontWeight: FontWeight.w800),
-                    ),
-                  ))),
-            )
-          ])
-        ],
-      ),
+        ));
+  }
+
+  SizedBox _services() {
+    return SizedBox(
+        height: 40,
+        child: ListView.separated(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          scrollDirection: Axis.horizontal,
+          itemBuilder: (context, index) => GestureDetector(
+            onTap: () {
+              setState(() {
+                selectedService = index;
+              });
+            },
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              decoration: BoxDecoration(
+                  color: selectedService == index
+                      ? const Color(0xFF818AF9)
+                      : const Color(0xFFF5F5F5),
+                  borderRadius: BorderRadius.circular(12)),
+              child: Center(
+                child: Text(
+                  Service.all()[index],
+                  style: GoogleFonts.manrope(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w800,
+                    color: selectedService == index
+                        ? const Color(0xFFF5F5F5)
+                        : const Color(0xFFCACACA),
+                  ),
+                ),
+              ),
+            ),
+          ),
+          separatorBuilder: (context, index) => const SizedBox(
+            width: 10,
+          ),
+          itemCount: Service.all().length,
+        ));
+  }
+
+  Expanded _bottomCard() {
+    List<DoctorModel> filteredDoctors = doctors.where((doctor) {
+      return doctor.service.contains(Service.all()[selectedService]);
+    }).toList();
+
+    return Expanded(
+      child: ListView.separated(
+          scrollDirection: Axis.vertical,
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          shrinkWrap: true,
+          itemBuilder: (context, index) => Container(
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(14),
+                    boxShadow: [
+                      BoxShadow(
+                          color: const Color(0XFF35385A).withOpacity(0.12),
+                          blurRadius: 30,
+                          offset: const Offset(0, 2))
+                    ]),
+                child: Row(children: [
+                  Container(
+                      clipBehavior: Clip.hardEdge,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Image.asset(
+                        filteredDoctors[index].image,
+                        height: 103,
+                        width: 88,
+                      )),
+                  const SizedBox(width: 20),
+                  Column(
+                    children: [
+                      Text(
+                        filteredDoctors[index].name,
+                        style: GoogleFonts.manrope(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w800,
+                            color: const Color(0xFF35385A)),
+                      ),
+                      const SizedBox(height: 5),
+                      Row(
+                        children: [
+                          RichText(
+                              text: TextSpan(
+                                  text:
+                                      ("Service : ${filteredDoctors[index].service.join(', ')}"),
+                                  style: GoogleFonts.manrope(
+                                      fontSize: 12,
+                                      color: const Color(0xFF35385A)))),
+                        ],
+                      ),
+                      const SizedBox(height: 5),
+                      SizedBox(
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Icon(
+                              FeatherIcons.mapPin,
+                              color: Color.fromARGB(255, 86, 234, 42),
+                              size: 14,
+                            ),
+                            const SizedBox(width: 5),
+                            Text(filteredDoctors[index].distance,
+                                style: GoogleFonts.manrope(
+                                  fontSize: 12,
+                                  color: const Color(0xFFACA3A3),
+                                ))
+                          ],
+                        ),
+                      )
+                    ],
+                  )
+                ]),
+              ),
+          separatorBuilder: (context, index) => const SizedBox(height: 11),
+          itemCount: filteredDoctors.length),
     );
   }
 }
